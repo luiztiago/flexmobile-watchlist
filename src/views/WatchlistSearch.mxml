@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:View xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark" title="Watchlist">
+	
+	<fx:Script>
+		
+		<![CDATA[
+			
+			private var text:String; 
+			
+			protected function button1_clickHandler(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				text = txtSearch.text;
+				navigator.pushView(WatchlistMovieDetail, text);
+			}
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:TextInput id="txtSearch" top="20" horizontalCenter="0"/>
+	<s:Button x="20" y="89" width="440" label="Pesquisar" click="button1_clickHandler(event)" />
+</s:View>
