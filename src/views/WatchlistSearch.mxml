@@ -20,6 +20,15 @@
 	<fx:Declarations>
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
+	
+	<s:navigationContent>
+		<s:Button icon="@Embed('../../assets/home.png')"
+				  click="navigator.popToFirstView()"/>
+	</s:navigationContent>
+	<s:titleContent>
+		<s:Label id="key" text="Watchlist" width="100%" color="0xFFFFFF" />
+	</s:titleContent>
+	
 	<s:TextInput id="txtSearch" top="20" horizontalCenter="0"/>
 	<s:Button x="20" y="89" width="440" label="Pesquisar" click="button1_clickHandler(event)" />
 </s:View>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:View xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		xmlns:s="library://ns.adobe.com/flex/spark" 
+		title="Watchlist"
+		add="consult(event)">
+	
+	<fx:Script>
+		
+		<![CDATA[
+			import dao.MovieDao;
+			
+			import mx.collections.ArrayList;
+			import mx.events.FlexEvent;
+			
+			import spark.events.IndexChangeEvent;
+			
+			import vo.Movie;
+			
+			[Bindable]
+			private var movies:ArrayList;
+			
+			protected function consult(event:FlexEvent):void
+			{
+				var daoMovie:MovieDao = new MovieDao();
+				moviesList.dataProvider = daoMovie.listMovies();
+			}
+			
+			protected function moviesList_changeHandler(event:IndexChangeEvent):void
+			{
+				var daoMovie:MovieDao = new MovieDao();
+				var hasMovies:Boolean = daoMovie.hasMovies();
+				
+				if(hasMovies) {
+					navigator.pushView(WatchlistMovieDetail, moviesList.selectedItem.title);
+				}
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		
+	</fx:Declarations>
+	
+	<s:navigationContent>
+		<s:Button icon="@Embed('../../assets/home.png')"
+				  click="navigator.popToFirstView()"/>
+	</s:navigationContent>
+	<s:titleContent>
+		<s:Label id="key" text="Watchlist" width="100%" color="0xFFFFFF" />
+	</s:titleContent>
+	
+	<s:List id="moviesList" x="14" width="456" height="685" labelField="title" change="moviesList_changeHandler(event)"></s:List>
+	
+</s:View>

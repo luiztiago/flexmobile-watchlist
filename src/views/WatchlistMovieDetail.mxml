@@ -3,32 +3,86 @@
 		xmlns:s="library://ns.adobe.com/flex/spark" title="Watchlist"
 		add="loadMovie(event)">
 	
+	<!--creationComplete="onStart(event)"-->
+	
 	<fx:Script>
 		
 		<![CDATA[
 			
 			import com.adobe.serialization.json.JSON;
 			
+			import dao.MovieDao;
+			
 			import mx.events.FlexEvent;
 			import mx.rpc.events.ResultEvent;
+			
+			import vo.Movie;
+			
+			private var movie:Object;
+			
+			//private var con;
 			
 			protected function loadMovie(event:FlexEvent):void
 			{
 				ws.send();
+				movieDetail.visible = false;
+				loader.visible = true;
+			}
+			protected function save(event:MouseEvent):void
+			{
+				var movieDB:Movie = new Movie();
+				movieDB.title = movie.Title;
+				movieDB.rating = movie.Rating;
+				movieDB.poster = movie.Poster;
+				movieDB.plot = movie.Plot;
+				movieDB.genre = movie.Genre;
+				movieDB.year = movie.Year;
+				movieDB.runtime = movie.Runtime;
+				
+				var daoMovie:MovieDao = new MovieDao();
+				daoMovie.addMovie(movieDB);
+				
+				navigator.pushView(WatchlistListMovies);
 			}
 			
 			protected function onResult(event:ResultEvent):void
 			{
+				
+//				var loader:Loader = new Loader();
+//				loader.contentLoaderInfo.addEventListener(Event.COMPLETE, displayImage);		 	
+//				loader.load(new URLRequest(movie.Poster));
+				
+				movieDetail.visible = true;
+				loader.visible = false;
 				var json:String = event.result as String;
-				var movie:Object = JSON.decode(json);
-				moviePoster.source = movie.Poster;
+				movie = JSON.decode(json);
+				//moviePoster.source(movie.Poster);
 				movieTitle.text = movie.Title;
 				movieYear.text = movie.Year;
 				movieRating.text = movie.Rating;
 				movieGenre.text = movie.Genre;
 				movieRuntime.text = movie.Runtime;
 				moviePlot.text = movie.Plot;
-				//twitters = new ArrayList(arrTwitters);
+				
+				var daoMovie:MovieDao = new MovieDao();
+				var hasMovie:Boolean = daoMovie.checkExists(movie.Title);
+				
+				if(hasMovie == true) {
+					btnRemove.visible = true;
+					btnSave.visible = false;
+				}else{
+					btnRemove.visible = false;
+					btnSave.visible = true;
+				}
+				
+			}
+			
+			protected function remove(event:MouseEvent):void
+			{
+				// TODO Auto-generated method stub
+				var daoMovie:MovieDao = new MovieDao();
+				daoMovie.removeMovie(movie.Title);
+				navigator.pushView(WatchlistListMovies);
 			}
 			
 		]]>
@@ -37,22 +91,55 @@
 	<fx:Declarations>
 		<s:HTTPService url="http://www.imdbapi.com/?t={escape(data as String)}" 
 					   resultFormat="text" id="ws" 
-					   result="onResult(event)"/>
+					   result="onResult(event)" />
 		
 	</fx:Declarations>
-	<s:Image x="119" y="29" width="234" height="280" id="moviePoster" />
-	<s:Label x="10" y="327" width="460" height="86" id="movieTitle" fontSize="40" text="Title" textAlign="center"/>
 	
-	<s:Label x="20" y="441" width="153" text="Year" color="0x666666" />
-	<s:Label x="20" y="481" width="153" text="Rating" color="0x666666" />
-	<s:Label x="20" y="521" width="153" text="Genre" color="0x666666" />
-	<s:Label x="20" y="561" width="153" text="Runtime" color="0x666666" />
-	<s:Label x="20" y="601" width="153" text="Plot" color="0x666666" />
+	<s:navigationContent>
+		<s:Button icon="@Embed('../../assets/home.png')"
+				  click="navigator.popToFirstView()"/>
+	</s:navigationContent>
+	<s:titleContent>
+		<s:Label id="key" text="Watchlist" width="100%" color="0xFFFFFF" />
+	</s:titleContent>
+	<s:actionContent>
+		<s:Button icon="@Embed('../../assets/save.png')"
+				  id="btnSave"
+				  click="save(event)"
+				  visible="false"
+				  />
+		<s:Button icon="@Embed('../../assets/remove.png')"
+				  id="btnRemove"
+				  click="remove(event)"
+				  visible="false"
+				  />
+	</s:actionContent>
 	
-	<s:Label x="160" y="441" width="310" id="movieYear" text="Year"/>
-	<s:Label x="160" y="481" width="310" id="movieRating" text="Rating"/>
-	<s:Label x="160" y="521" width="310" id="movieGenre" text="Genre"/>
-	<s:Label x="160" y="561" width="310" id="movieRuntime" text="Runtime"/>
-	<s:Label x="160" y="601" width="310" id="moviePlot" height="84" text="Plot"/>
+	<s:Group id="movieDetail" x="10" y="10"> 
+		<s:layout>
+			<s:VerticalLayout paddingTop="10"/>
+		</s:layout>
+		
+		<s:Label width="460" height="86" id="movieTitle" fontSize="40" text="Title" textAlign="center"/>
+		
+		<s:Label width="153" color="0x666666" paddingLeft="10" paddingBottom="10" text="Year"/>
+		<s:Label width="460" id="movieYear" paddingLeft="10" paddingBottom="10" text="Year"/>
+		
+		<s:Label width="153" text="Rating" paddingLeft="10" paddingBottom="10" color="0x666666" />
+		<s:Label width="460" id="movieRating" paddingLeft="10" paddingBottom="10" text="Rating"/>
+		
+		<s:Label width="153" text="Genre" paddingLeft="10" paddingBottom="10" color="0x666666" />
+		<s:Label width="460" id="movieGenre" paddingLeft="10" paddingBottom="10" text="Genre"/>
+		
+		<s:Label width="153" text="Runtime" paddingLeft="10" paddingBottom="10" color="0x666666" />
+		<s:Label width="460" id="movieRuntime" paddingLeft="10" paddingBottom="10" text="Runtime"/>
+		
+		<s:Label width="153" text="Plot" paddingLeft="10" paddingBottom="10" color="0x666666" />
+		<s:Label width="460" id="moviePlot" paddingLeft="10" paddingBottom="10" text="Plot"/>
+	</s:Group>
+	<s:BusyIndicator id="loader" x="220" y="320" visible="false" />
+	
+	
+	
 	
 </s:View>

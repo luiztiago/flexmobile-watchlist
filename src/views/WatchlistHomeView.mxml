@@ -8,6 +8,12 @@
 			{
 				navigator.pushView(WatchlistSearch);
 			}
+			
+			protected function button2_clickHandler(event:MouseEvent):void
+			{
+				navigator.pushView(WatchlistListMovies);
+			}
+			
 		]]>
 	</fx:Script>
 	
@@ -15,9 +21,6 @@
 		<!-- Place non-visual elements (e.g., services, value objects) here -->
 	</fx:Declarations>
 	<s:Button x="10" y="10" width="460" label="Search" click="button1_clickHandler(event)" />
-	<s:Button x="10" y="84" width="460" label="Movies to Watch"/>
-	<s:Button x="10" y="159" width="460" label="Watched Movies"/>
-	
-	
+	<s:Button x="10" y="84" width="460" label="Movies to Watch" click="button2_clickHandler(event)" />
 	
 </s:View>

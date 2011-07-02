@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS "movies";
+CREATE TABLE "movies" ("id" INTEGER PRIMARY KEY  NOT NULL ,"title" VARCHAR(255),"rating" VARCHAR(50),"poster" VARCHAR(255),"plot" TEXT,"genre" VARCHAR(100),"year" VARCHAR(10),"runtime" VARCHAR(50));
